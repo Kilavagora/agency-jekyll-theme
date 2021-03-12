@@ -84,3 +84,40 @@ $(function() {
 $('#name').focus(function() {
   $('#success').html('');
 });
+
+(function() {
+  var lastKnownScrollPosition = 0;
+  var ticking = false;
+
+  var setTrap = function(scrollPos) {
+    var trap = document.getElementById("trap");
+    var val = trap.value;
+    trap.value = !val ? scrollPos : val + "+" + scrollPos;
+    document.removeEventListener('scroll', handleScroll);
+  };
+
+  var handleScroll = function(e) {
+    lastKnownScrollPosition = window.scrollY;
+    if (!ticking) {
+      window.requestAnimationFrame(function() {
+        setTrap(lastKnownScrollPosition);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+
+  var msg = document.getElementById("message");
+  var setTrapEval = function(e) {
+    var trapEval = document.getElementById("trap-eval");
+    var trap = document.getElementById("trap");
+    trapEval.value = trap.value.split("+").reduce(function(a, b) {
+      return (a | 0) + (b | 0);
+    });
+    msg.removeEventListener("blur", setTrapEval);
+  };
+
+  msg.addEventListener("blur", setTrapEval);
+
+  document.addEventListener('scroll', handleScroll);
+})();
