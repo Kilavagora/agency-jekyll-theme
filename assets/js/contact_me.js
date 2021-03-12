@@ -24,21 +24,22 @@ $(function() {
       }
       $this = $("#sendMessageButton");
       $this.prop("disabled", true); // Disable submit button until AJAX call is complete to prevent duplicate messages
-      $.ajax({
-        url: url,
-        type: "POST",
-	dataType: "json",
-        data: {
+      var payload = {
           name: name,
           phone: phone,
           email: email,
           message: message,
           trap: trap,
           "trap-eval": trapEval
-        },
+      };
+      $.ajax({
+        url: url,
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        contentType: "application/json; charset=UTF-8",
         cache: false,
-
-		success: function() {
+        success: function() {
           // Success message
           $('#success').html("<div class='alert alert-success'>");
           $('#success > .alert-success').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
@@ -50,7 +51,6 @@ $(function() {
           //clear all fields
           $('#contactForm').trigger("reset");
         },
-
         error: function() {
           // Fail message
           $('#success').html("<div class='alert alert-danger'>");
